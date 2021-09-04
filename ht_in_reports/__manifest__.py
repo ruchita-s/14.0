@@ -5,11 +5,11 @@
     'Author':'Ruchita Sapariya',
     'description':'''Indian standard PDF reports.''',
     'website':'http.google.com',
-    'depends':['sale','base'],
+    'depends':['sale','base','account'],
     'data':[
         
-        'security/ir.model.access.csv',
-        'data/seq_report_invoice.xml',
+        # 'security/ir.model.access.csv',
+        # 'data/seq_report_invoice.xml',
         'views/report_views.xml',
         'reports/invoice_report.xml',
         

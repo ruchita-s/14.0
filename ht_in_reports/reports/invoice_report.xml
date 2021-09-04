@@ -3,76 +3,223 @@
     <data>
         <template id="in_report">
             <t>
-                <div class="header" t-att-style="report_header_style">
-                    <div align="left">
-                        <img t-attf-src="data:image/png;base64,{{res_company.logo}}" style="width:150px;height:60px;"/>
-                    </div>
-                    <div text-align="center" align="right">
-                        <h3><span t-field="doc.name" /></h3>
-                        <h5>GSTIN: <span t-field="doc.gst_no"/></h5>
-                        <span t-field="doc.street1" />
-                        <span t-field="doc.street2" />
-                        <span t-field="doc.city" />
-                        <span t-field="doc.state"/>
-                        <span t-field="doc.pin_code" />
-                        <span t-field="doc.country" />
-                    </div>
-                </div>
-
-                <div class="row mt32 mb32" id="invoice">
-                    <div class="col-auto col-3 mw-100 mb-2">
-                        <p><h1>INVOICE</h1>
-                        <strong><span t-field="doc.inv_num"/></strong></p>
-                        <br/>
-                        <br/>
-                        <p><strong>Balance Due:</strong>
-                        <br/>
-                        <strong><span t-field="doc.balance_due"/></strong></p>
-                    </div>
-                    <div class="col-auto col-3 mw-100 mb-2">
-                        <strong>Invoice Date:</strong>
-                        <span t-field="doc.inv_date" t-options='{"widget": "date"}'/>
-                        <p><strong>Terms:</strong>
-                        <span t-field="doc.due_date"/></p>
-                        <p><strong>Due Date:</strong>
-                        <span t-field="doc.due_date"/></p>
-                        <br/>
-                    </div>
+                <div class="header" style="border-bottom: 1px solid black ;">
+                    <table class="table" style="width:100%">
+                        <tr>
+                            <td>
+                                <img t-attf-src="data:image/png;base64,{{res_company.logo}}" style="width:150px;height:60px;"/>
+                            </td>
+                            <td align="right">
+                                <h3><span t-field="doc.partner_id" /></h3>
+                                <h5>GSTIN: <span t-field="doc.gst_number"/></h5>
+                                <h6><span t-field="doc.partner_id.street" />
+                                <span t-field="doc.partner_id.street2" />
+                                <span t-field="doc.partner_id.city" />
+                                <span t-field="doc.partner_id.state_id" />
+                                <span t-field="doc.partner_id.zip" />
+                                <span t-field="doc.partner_id.country_id" /></h6>
+                            </td>
+                        </tr>
+                    </table>
                 </div>
                 <br/>
+                <br/>
 
-                <div class="row" id="hash_last_div">
-                    <div class="col-12" id="hash_chain_compliant">
-                        <br/>
-                        <h6>
-                            The hash chain is compliant: it is not possible to alter the
-                            data without breaking the hash chain for subsequent parts.
-                        </h6>
-                        <br/>
-                    </div>
+                <div>
+                    <table class="table" style="width:100%">
+                        <tr>
+                            <td>
+                                <span>
+                                    <table>
+                                        <tr>
+                                            <td>
+                                                <b>INVOICE:</b>
+                                            </td>
+                                            <td>
+                                                <t t-esc="doc.name"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <b>Balance Due::</b>
+                                            </td>
+                                            <td>
+                                                <t t-esc="doc.due_balance"/>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </span>
+                            </td>
+                            <td align="right">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <b>Invoice Date:</b>
+                                        </td>
+                                        <td>
+                                            <t t-esc="doc.invoice_date"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <b>Terms:</b>
+                                        </td>
+                                        <td>
+                                            <t t-esc="doc.invoice_payment_term_id"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <b>Due Date:</b>
+                                        </td>
+                                        <td>
+                                            <t t-esc="doc.invoice_date_due"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                    <br/>
                 </div>
-                <!-- <table class="table table-striped">
-                    <h3>Report Lines</h3>
-                        <t t-if="doc.line_ids">
-                            <tr>
-                                <th>Trainee Analysis Id</th>
-                                <th>Measure</th>
-                                <th>Need Improvement</th>
-                                <th>Analysis Date</th>
-                                <th>Training Required</th>
-                            </tr>
-                        </t>
+                <br/>
+                <br/>
+                <br/>
+                <div>
+                    <table class="table table-sm o_main_table" name="invoice_line_table" style="width:100%; border-bottom: 1px solid Gray">
+                        <thead style="background-color:#535453; color:#f2f7f2">
+                            <t t-if="doc.invoice_line_ids">
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Description</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                    <th>Taxes</th>
+                                    <th>SubTotal</th>
+                                </tr>
+                            </t>
+                        </thead>
                         <tbody>
-                            <tr t-foreach="doc.line_ids" t-as="doc">
-                                <td><span t-field="doc.trainee_analysis_id"/></td>
-                                <td><span t-field="doc.measure"/></td>
-                                <td><span t-field="doc.improve"/></td>
-                                <td><span t-field="doc.analysis_date"/></td>
-                                <td><span t-field="doc.need_more"/></td>
+                            <tr t-foreach="doc.invoice_line_ids" t-as="line">
+                                <td><span t-field="line.product_id"/></td>
+                                <td><span t-field="line.name"/></td>
+                                <td><span t-field="line.quantity"/></td>
+                                <td><span t-field="line.price_unit"/></td>
+                                <td><span t-field="line.tax_ids"/></td>
+                                <td><span t-field="line.price_subtotal"/></td>
                             </tr>
                         </tbody>
-                </table>        -->   
-            </t>       
+                    </table>     
+                </div>
+
+                <div align="right">
+                    <table>
+                        <tr>
+                            <td>
+                            </td>
+                            <td align="right">
+                                <div id="total" class="row">
+                                    <div t-attf-class="#{'col-6' if report_type != 'html' else 'col-sm-7 col-md-6'} ml-auto">
+                                        <table class="table table-sm" style="page-break-inside: avoid;">
+                                            <tr class="border-black o_subtotal" style="">
+                                                <td><strong>Subtotal</strong></td>
+                                                <td class="text-right">
+                                                    <span t-field="doc.amount_untaxed"/>
+                                                </td>
+                                            </tr>
+                                            <t t-foreach="doc.amount_by_group" t-as="amount_by_group">
+                                                <tr style="">
+                                                    <t t-if="len(doc.line_ids.filtered(lambda line: line.tax_line_id)) in [0, 1] and doc.amount_untaxed == amount_by_group[2]">
+                                                        <td><span class="text-nowrap" t-esc="amount_by_group[0]"/></td>
+                                                        <td class="text-right o_price_total">
+                                                            <span class="text-nowrap" t-esc="amount_by_group[3]" />
+                                                        </td>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <td>
+                                                            <span t-esc="amount_by_group[0]"/>
+                                                            <span class="text-nowrap"> on
+                                                                <t t-esc="amount_by_group[4]"/>
+                                                            </span>
+                                                        </td>
+                                                        <td class="text-right o_price_total">
+                                                            <span class="text-nowrap" t-esc="amount_by_group[3]"/>
+                                                        </td>
+                                                    </t>
+                                                </tr>
+                                            </t>
+                                            <tr class="border-black o_total">
+                                                <td><strong>Total</strong></td>
+                                                <td class="text-right">
+                                                    <span class="text-nowrap" t-field="doc.amount_total"/>
+                                                </td>
+                                            </tr>
+                                            <t t-if="print_with_payments">
+                                                <t t-if="doc.payment_state != 'invoicing_legacy'">
+                                                    <t t-set="payments_vals" t-value="doc.sudo()._get_reconciled_info_JSON_values()"/>
+                                                    <t t-foreach="payments_vals" t-as="payment_vals">
+                                                        <tr>
+                                                            <td>
+                                                                <i class="oe_form_field text-right oe_payment_label">Paid on <t t-esc="payment_vals['date']" t-options='{"widget": "date"}'/></i>
+                                                            </td>
+                                                            <td class="text-right">
+                                                                <span t-esc="payment_vals['amount']" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                                                            </td>
+                                                        </tr>
+                                                    </t>
+                                                    <t t-if="len(payments_vals) > 0">
+                                                        <tr class="border-black">
+                                                            <td><strong>Amount Due</strong></td>
+                                                            <td class="text-right">
+                                                                <span t-field="doc.amount_residual"/>
+                                                            </td>
+                                                        </tr>
+                                                    </t>
+                                                </t>
+                                            </t>
+                                        </table>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>        
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <t t-foreach="doc.partner_id.bank_ids" t-as="rec">
+                    <strong>Bank Name:</strong>
+                    <span t-field="rec.bank_id"/>
+                    <br/>
+                    <strong> Account Num:</strong>
+                    <span t-field="rec.acc_number"/>
+                </t>
+                <br/>
+                <br/>
+                <br/>      
+                <strong>Terms and conditions:</strong>
+                <p><span t-field="doc.narration"/></p>
+                <br/>
+                <br/>
+
+                <div class="footer">
+                    <div class="text-center" style="border-top: 1px solid black;">
+                        <ul class="list-inline">
+                            <li>Page:</li>
+                            <li><span class="page"/></li>
+                        </ul>
+                    </div>
+                </div>
+            </t>   
+            <br/>
+            <br/>
+            <br/> 
+
         </template>     
 
         <template id="invoice_report_template">
@@ -84,13 +231,13 @@
         </template>       
 
         <record id="action_in_report" model="ir.actions.report">
-            <field name="name">Invoice for members</field>
-            <field name="model">in.report</field>
+            <field name="name">New Account Invoice</field>
+            <field name="model">account.move</field>
             <field name="report_type">qweb-pdf</field>
             <field name="report_name">ht_in_reports.invoice_report_template</field>
             <field name="report_file">ht_in_reports.invoice_report_template</field>
-            <field name="binding_model_id" ref="model_in_report"/>
-            <field name="print_report_name">(object.name)</field>
+            <field name="binding_model_id" ref="model_account_move"/>
+            <field name="print_report_name">(object.partner_id.name)</field>
         </record>
     </data>
 </odoo>
