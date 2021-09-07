@@ -14,3 +14,11 @@ class AccountMove(models.Model):
 
     due_balance = fields.Float(string='Due Balance')
     gst_number = fields.Char(string='GSTIN')
+
+
+class ResCompany(models.Model):
+    _inherit = "res.company"
+    
+    Acc_num = fields.Char(string="Account number")
+    ifsc_code = fields.Char(string='IFSC Code')
+    swift_code = fields.Char(string='Swift Code')

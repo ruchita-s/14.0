@@ -12,6 +12,7 @@
         # 'data/seq_report_invoice.xml',
         'views/report_views.xml',
         'reports/invoice_report.xml',
+        'reports/non_gst_invoice_report.xml',
         
     ],
     'installable': True,

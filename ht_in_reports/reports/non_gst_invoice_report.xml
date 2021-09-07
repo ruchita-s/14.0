@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <template id="in_gst_report">
+        <template id="in_report">
             <t>
                 <div class="header">
+
                     <div style="align:left; float:left; width:25%; padding:10px; height:100px;" >
                         <img t-attf-src="data:image/png;base64,{{res_company.logo}}" style="width:100px;height:100px;"/>
                     </div>
@@ -20,16 +21,16 @@
                     <div style="float:left; padding:10px; height:100px;">
                         
                     </div>
+
                 </div>
                 <div style="text-align:center" >
-                    <h3> TAX INVOICE </h3>
+                    <h3> INVOICE </h3>
                 </div>
-                
                 
                 <table class="table table-bordered" style="width:100%">
                     <thead>
                         <tr>
-                            <th >INVOICE NO:</th>
+                            <th >Invoice No:</th>
                             <th>Balance Due:</th>
                             <th>Invoice Date:</th>
                             <th>Payment Term:</th>
@@ -60,18 +61,18 @@
                         </tr>
                     </tbody>
                 </table>
+
                 <br/>
                 <br/>
                 <br/>
                 <div>
-                    <table class="table table-sm o_main_table" name="inherit_gst_invoice_line_table" style="width:100%; font-family:verdana">
+                    <table class="table table-sm o_main_table" name="inherit_invoice_line_table" style="width:100%; font-family:verdana">
                         <thead style="background-color:#535453; color:#f2f7f2; font-size:19px">
                             <t t-if="doc.invoice_line_ids" >
                                 <tr >
                                     <th>Product</th>
                                     <th>Qty</th>
                                     <th>Price</th>
-                                    <th>Taxes</th>
                                     <th>Subtotal</th>
                                 </tr>
                             </t>
@@ -81,7 +82,6 @@
                                 <td style="border-bottom: 1px solid gray;"><span t-field="line.product_id" /></td>
                                 <td style="text-align:right; border-bottom: 1px solid gray;"><span t-field="line.quantity"/></td>
                                 <td style="text-align:right; border-bottom: 1px solid gray;"><span t-field="line.price_unit"/></td>
-                                <td style="text-align:right; border-bottom: 1px solid gray;"><span t-field="line.tax_ids"/></td>
                                 <td style="text-align:right; border-bottom: 1px solid gray;"><span t-field="line.price_subtotal"/></td>
                             </tr>
 
@@ -90,77 +90,32 @@
                 </div>
 
                 <div align="right">
-                    <table style="border-bottom: 1px solid gray">
+                    <table style="border-bottom: 1px solid gray; width:30%">
                         <tr>
                             <td>
                             </td>
                             <td align="right">
-                                <div id="gst_total" class="row" >
+                                <div id="total" class="row" >
                                     <div t-attf-class="#{'col-6' if report_type != 'html' else 'col-sm-7 col-md-6'} ml-auto">
                                         <table class="table table-sm" style="page-break-inside: avoid; width:50%">
                                             <tbody class="invoice_tbody">
-                                                <tr>
-                                                    <td ><strong>Subtotal</strong></td>
-                                                    <td>
-                                                        <span t-field="doc.amount_untaxed"/>
-                                                    </td>
-                                                </tr>
-
-                                                <t t-foreach="doc.amount_by_group" t-as="amount_by_group">
-                                                    <tr>
-                                                        <t t-if="len(doc.line_ids.filtered(lambda line: line.tax_line_id)) in [0, 1] and doc.amount_untaxed == amount_by_group[2]">
-                                                            <td><span class="text-nowrap" t-esc="amount_by_group[0]"/></td>
-                                                            <td class="text-right o_price_total">
-                                                                <span class="text-nowrap" t-esc="amount_by_group[3]" />
-                                                            </td>
-                                                        </t>
-                                                        
-                                                        <t t-else="">
-                                                            <td>
-                                                                <span t-esc="amount_by_group[0]"/>
-                                                                <span class="text-nowrap"> 
-                                                                </span>
-                                                            </td>
-                                                            <td class="text-right o_price_total">
-                                                                <span class="text-nowrap" t-esc="amount_by_group[3]"/>
-                                                            </td>
-                                                        </t>
-                                                        
-                                                    </tr>
-                                                </t>
                                             
                                                 <tr >
                                                     <td><strong>Total</strong></td>
                                                     <td class="text-right">
-                                                        <span class="text-nowrap" t-field="doc.amount_total"/>
+                                                        <span class="text-nowrap" t-field="doc.amount_untaxed"/>
                                                     </td>
                                                 </tr>
-                                                <t t-if="print_with_payments">
-                                                    <t t-if="doc.payment_state != 'invoicing_legacy'">
-                                                        <t t-set="payments_vals" t-value="doc.sudo()._get_reconciled_info_JSON_values()"/>
-                                                        <t t-foreach="payments_vals" t-as="payment_vals">
-                                                            <tr>
-                                                                <td>
-                                                                    <i class="oe_form_field text-right oe_payment_label">Paid on <t t-esc="payment_vals['date']" t-options='{"widget": "date"}'/></i>
-                                                                </td>
-                                                            
-                                                                <td class="text-right">
-                                                                    <span t-esc="payment_vals['amount']" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
-                                                                </td>
-                                                            </tr>
-                                                        </t>
-                                                        
-                                                        <t t-if="len(payments_vals) > 0">
-                                                            <tr class="border-black">
-                                                                <td><strong>Amount Due</strong></td>
-                                                                <td class="text-right">
-                                                                    <span t-field="doc.amount_residual"/>
-                                                                </td>
-                                                            </tr>
-                                                        </t>
-                                                        
+                                                <!-- <t >
+                                                    <t>
+                                                        <tr class="border-black">
+                                                            <td><strong>Amount Due</strong></td>
+                                                            <td class="text-right">
+                                                                <span t-field="doc.amount_residual"/>
+                                                            </td>
+                                                        </tr>
                                                     </t>
-                                                </t>
+                                                </t> -->
                                             </tbody>
                                         </table>
                                     </div>
@@ -214,20 +169,20 @@
 
         </template>     
 
-        <template id="gst_invoice_report_template">
+        <template id="invoice_report_template">
             <t t-call="web.html_container">
                 <t t-foreach="docs" t-as="doc">
-                    <t t-call="ht_in_reports.in_gst_report"/>
+                    <t t-call="ht_in_reports.in_report"/>
                 </t>
             </t>
         </template>       
 
-        <record id="action_in_gst_report" model="ir.actions.report">
-            <field name="name">GST Invoice</field>
+        <record id="action_in_report" model="ir.actions.report">
+            <field name="name"> Non GST Invoice</field>
             <field name="model">account.move</field>
             <field name="report_type">qweb-pdf</field>
-            <field name="report_name">ht_in_reports.gst_invoice_report_template</field>
-            <field name="report_file">ht_in_reports.gst_invoice_report_template</field>
+            <field name="report_name">ht_in_reports.invoice_report_template</field>
+            <field name="report_file">ht_in_reports.invoice_report_template</field>
             <field name="binding_model_id" ref="model_account_move"/>
             <field name="print_report_name">(object.partner_id.name)</field>
         </record>
